@@ -1,4 +1,5 @@
-# Trabalhando com R e SQLite
+# Big Data na Prática 4
+# Segmentação de Clientes com Base em Análise RFM (Recência, Frequência e Valor Monetário)
 
 
 # Configurando Diretório de Trabalho
@@ -32,14 +33,55 @@ getwd()
 # frequência, os que compram poucas coisa, mas frequentemente, e que não comprar nada há muito tempo.
 
 
+
+# Neste Projeto após o carregamento dos dados iremos fazer:
+#
+# - organizar os dados
+# - aplicar engenharia de atributos para criar uma nova variável
+# - aplicar Análise RFM (extrair valores de Recência, Frequência e Valor Monetário)
+# - usar estes dados para treinar o modelo de aprendizagem de máquina que irá encontrar os clientes por similaridade
+# - por fim dividir os clientes em 5 grupos
+
+
+
 # Instalando e importando pacotes
 
-library(tidyverse)
-library(dplyr)
-library(ggplot2)
-library(caret)
-library(plotly)
-library(readxl)
-library(rfm)
-library(stats)
-library(factoextra)
+library(tidyverse)      # manipula dados
+library(dplyr)          # manipula dados
+library(ggplot2)        # criar gráficos
+library(plotly)         # criar gráficos
+library(caret)          # criar modelo de aprendizado de máquina
+library(readxl)         # ler planilha excel
+library(rfm)            # analise rfm
+library(stats)          # calculo estatítisco
+library(factoextra)     # permite trabalhar com variáveis de forma diferente
+
+
+# Função para carregar os dados da planilha Excel (este arquivo excel possui 2 planilhas)
+# foi necessário adicionar um range para conseguir fazer a leitura dos dados (ler da celular A1 até H99999)
+
+carrega_dados <- function() {
+  
+  setwd("C:/Users/Julia/Desktop/CienciaDeDados/1.Big-Data-Analytics-com-R-e-Microsoft-Azure-Machine-Learning/6.Projeto-BigDataNaPratica-Segmentacao-de-Clientes-com-Base-em-Analise-RFM")
+  
+  intervalo1 <- "A1:H99999"
+  intervalo2 <- "A1:H99999"
+  
+  sheet1 <- read_excel('online_retail_II.xlsx', sheet = 'Year 2009-2010', range = intervalo1)
+  sheet2 <- read_excel('online_retail_II.xlsx', sheet = 'Year 2010-2011', range = intervalo2)
+  
+  dados_combinados <- rbind(sheet1, sheet2)
+  return(dados_combinados)
+}
+
+# Executa a função
+
+dados <- carrega_dados()
+
+dim(dados)
+View(dados)
+
+
+
+
+
