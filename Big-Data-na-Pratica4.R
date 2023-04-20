@@ -82,6 +82,27 @@ dim(dados)
 View(dados)
 
 
+# Em Análise RFM não podemos ter dados NA
 
 
+# função para chegar valores ausentes (recebe um objeto de dados (x) como entrada e retorna a soma de valores ausentes em cada coluna do objeto de dados. A função utiliza a função is.na() para verificar se cada valor em x é ausente (NA) e, em seguida, utiliza a função colSums() para somar o número de valores ausentes em cada coluna.)
 
+verifica_valor_ausente <- function(x) {
+  return(colSums(is.na(x)))
+}
+
+verifica_valor_ausente(dados)    # exibe as tabelas e a quantidade de valores NA em cada tabela
+
+
+# Tomar a decisão sobre o que fazer com os valores ausentes.
+#
+# Analisando os valores, percebemos que a coluna Description tem 1169 valores ausentes. E neste caso específico como são
+# muitos dados, então não irá fazer a diferença excluir todas as linhas cujo os valores de Description forem ausentes
+#
+# Analisando os valores, percebemos que a coluna Description tem 6252 valores ausentes. Como são valores de ID, não podemos fazer 
+# imputação aqui (como fazer todos os valores NA ficarem com a média ou adicionar a moda a esses valores), então iremos excluir estas linhas
+
+
+# Excluindo os registros/linhas com valores ausentes
+
+# Função para limpar e pré-processar os dados
