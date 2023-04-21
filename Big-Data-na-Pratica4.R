@@ -64,8 +64,8 @@ carrega_dados <- function() {
   
   setwd("C:/Users/Julia/Desktop/CienciaDeDados/1.Big-Data-Analytics-com-R-e-Microsoft-Azure-Machine-Learning/6.Projeto-BigDataNaPratica-Segmentacao-de-Clientes-com-Base-em-Analise-RFM")
   
-  intervalo1 <- "A1:H99999"
-  intervalo2 <- "A1:H99999"
+  intervalo1 <- "A1:H9999"
+  intervalo2 <- "A1:H9999"
   
   sheet1 <- read_excel('online_retail_II.xlsx', sheet = 'Year 2009-2010', range = intervalo1)
   sheet2 <- read_excel('online_retail_II.xlsx', sheet = 'Year 2010-2011', range = intervalo2)
@@ -105,4 +105,33 @@ verifica_valor_ausente(dados)    # exibe as tabelas e a quantidade de valores NA
 
 # Excluindo os registros/linhas com valores ausentes
 
-# Função para limpar e pré-processar os dados
+# Função para limpar e pré-processar os dados (cria uma nova coluna, exclui valores ausentes, edita coluna Invoice)
+
+processa_dados <- function(data1) {
+  
+  # criando uma coluna chamada TotalPrice
+  data1$TotalPrice <- data1$Quantity * data1$Price
+  
+  # remove os registros/linhas com valores ausentes
+  data1 <- na.omit(data1)
+  
+  # removendo os registros/linhas da coluna Invoice que contém a letra C (o que significa que este pedido foi cancelado)
+  data1 <- data1[!grepl("C", data1$Invoice), ]
+  
+  return(data1)
+}
+
+# Executa a função
+
+dataset <- processa_dados(dados)
+
+dim(dataset)
+View(dataset)
+
+
+
+
+
+
+
+
