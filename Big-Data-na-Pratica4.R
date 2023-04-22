@@ -129,6 +129,14 @@ dim(dataset)
 View(dataset)
 
 
+# Verificando a distribuição da variável Total Price
+
+ggplot(dataset,
+       aes(x = TotalPrice)) +
+  geom_density(fill = "#69b3a2", color = "#e9ecef", alpha = 3.5) +
+  labs(title = 'Distribuição da Variável TotalPrice')
+
+
 
 
 
