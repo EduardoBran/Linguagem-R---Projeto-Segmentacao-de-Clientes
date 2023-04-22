@@ -129,6 +129,9 @@ dim(dataset)
 View(dataset)
 
 
+# Realziando a análise exploratória (pode se feita no início, após limpeza dos dados ou até mesmo dps de realizar engenharia de atributos)
+
+
 # Verificando a distribuição da variável Total Price
 
 ggplot(dataset,
@@ -136,10 +139,13 @@ ggplot(dataset,
   geom_density(fill = "#69b3a2", color = "#e9ecef", alpha = 3.5) +
   labs(title = 'Distribuição da Variável TotalPrice')
 
+# editando a escala do eixo x (TotalPrice) para melhor visualização
 
-
-
-
-
+ggplot(dataset, aes(x = TotalPrice)) +
+  geom_density(fill = "#69b3a2", color = "#e9ecef", alpha = 0.35) +
+  labs(title = 'Distribuição da Variável TotalPrice') +
+  scale_x_continuous(limits = c(0, 100),  # Define o intervalo dos valores do eixo x
+                     breaks = seq(0, 100, by = 10),  # Define os rótulos dos intervalos no eixo x
+                     labels = function(x) paste0("$", x))  # Define os rótulos dos valores do eixo x com o símbolo de dólar
 
 
