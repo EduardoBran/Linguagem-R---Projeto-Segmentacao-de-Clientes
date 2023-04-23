@@ -149,3 +149,35 @@ ggplot(dataset, aes(x = TotalPrice)) +
                      labels = function(x) paste0("$", x))  # Define os rótulos dos valores do eixo x com o símbolo de dólar
 
 
+
+# Verificando número de clientes
+
+# desta forma retorna todas as linhas de Customer ID e assim não saberemos ao certo se são todos os clientes
+
+length(dataset$`Customer ID`)  # aspas por causa do espaço no nome da coluna
+
+# Para isso usamos o unique
+
+num_customers <- length(unique(dataset$`Customer ID`))
+
+# Imprimir o número de clientes únicos
+
+cat("Número de clientes únicos:", num_customers)
+
+
+# Total monetário gasto por cliente (total que cada cliente gastou)
+
+# - código usa a biblioteca dplyr no R para realizar operações de agregação no conjundo de dados dataset
+# - group_by(Customer ID): É uma função do dplyr usada para agrupar os dados pelo valor da coluna Customer ID. Isso cria grupos
+#   separados com base nos valores únicos da coluna Customer ID.
+# - summarise(Soma = sum(TotalPrice)): É uma função do dplyr que é usada para realizar a agregação dos dados dentro dos grupos criados
+#   pela função group_by(). Neste caso, está sendo calculada a soma dos valores da coluna TotalPrice para cada grupo, e o resultado é
+#   armazenado em uma nova coluna chamada Soma no resultado final.
+
+total_gasto <- dataset %>%
+  group_by(`Customer ID`) %>% 
+  summarise(Soma = sum(TotalPrice))
+
+
+
+
