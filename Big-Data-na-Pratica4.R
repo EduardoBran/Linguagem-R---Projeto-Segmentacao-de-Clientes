@@ -221,9 +221,60 @@ View(dataset)
 
 
 # Agora temos a coluna InvoiceDate com a data no formato correto para usar como valor da Recência
+# E assim temos os valores necessários para realizar a Análise RFM
+
+
+# função para calcular Recência, Frquência e Valor Monetário
+
+# - A função recebe um objeto de dados (obj) como entrada, em seguida, utiliza a função group_by() para agrupar os dados
+#   por Customer ID, ou seja, calcular as métricas para cada cliente individualmente.
+# - A função utiliza a função summarise() para resumir os dados do grupo em métricas específicas. As métricas calculadas são:
+#
+#  Recency: calculada como a diferença em dias entre a data date1 (que foi definida previamente como "31/03/2011") e a data mais
+#           recente de compra (max(InvoiceDate)) para cada cliente, convertendo o resultado em formato numérico.
+#  Frequency: calculada como o número de registros (n()) no grupo, que representa a contagem de compras feitas por cada cliente.
+#  Monetary: calculada como a soma dos valores de TotalPrice para cada cliente, representando o valor total gasto por cada cliente.
+#  Primeira_Compra: calculada como a data mínima de compra (min(InvoiceDate)) para cada cliente, representando a data da primeira
+#                   compra realizada por cada cliente.
+#
+# - Essas métricas são calculadas para cada cliente no objeto de dados obj e são armazenadas em um novo objeto que é retornado pela
+#   função. Essas métricas são comumente usadas na análise RFM (Recency, Frequency, Monetary), uma técnica de segmentação de clientes
+#   amplamente utilizada em marketing e análise de dados para identificar padrões de comportamento do cliente e direcionar estratégias
+#   de marketing segmentadas.
+
+funcao_calcula_rfm <- function(obj) {
+  
+  z <- obj %>%
+    group_by(`Customer ID`) %>%
+    summarise(Recency = as.numeric(date1 - max(InvoiceDate)),
+              Frequency = n(),
+              Monetary = sum(TotalPrice),
+              Primeira_Compra = min(InvoiceDate))
+  
+  
+  # Tomando a decisão de remover transações com valores acima do 3º Quartil e abaixo do 1º Quartil
+  # E com isso estaremos removendo valores outliers especialmente porque vamos aplicar Machine Learning
+  
+  Q1 <- quantile(z$Monetary, .25)
+  Q3 <- quantile(z$Monetary, .75)
+  
+  IQR <- IQR(z$Monetary)
+  
+  z <- subset(z, z$Monetary >= (Q1 - 1.5*IQR) & z$Monetary <= (Q3 + 1.5*IQR)) # filtrando
+  
+  return(z)
+}
+
+# Executa a função
+
+valores_rfm <- funcao_calcula_rfm(dataset)
+
+View(valores_rfm)
 
 
 
+# Agora temos coeficientes que representam informações sobre o padrão de compra de cada cliente
+# Com isso através deste conjunto de dados e vamos treinar o modelo de aprendizado de máquina para Segmentação de Clientes
 
 
 
