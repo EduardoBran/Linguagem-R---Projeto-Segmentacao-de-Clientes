@@ -64,8 +64,8 @@ carrega_dados <- function() {
   
   setwd("C:/Users/Julia/Desktop/CienciaDeDados/1.Big-Data-Analytics-com-R-e-Microsoft-Azure-Machine-Learning/6.Projeto-BigDataNaPratica-Segmentacao-de-Clientes-com-Base-em-Analise-RFM")
   
-  intervalo1 <- "A1:H9999"
-  intervalo2 <- "A1:H9999"
+  intervalo1 <- "A1:H99999"
+  intervalo2 <- "A1:H99999"
   
   sheet1 <- read_excel('online_retail_II.xlsx', sheet = 'Year 2009-2010', range = intervalo1)
   sheet2 <- read_excel('online_retail_II.xlsx', sheet = 'Year 2010-2011', range = intervalo2)
@@ -87,11 +87,11 @@ View(dados)
 
 # função para chegar valores ausentes (recebe um objeto de dados (x) como entrada e retorna a soma de valores ausentes em cada coluna do objeto de dados. A função utiliza a função is.na() para verificar se cada valor em x é ausente (NA) e, em seguida, utiliza a função colSums() para somar o número de valores ausentes em cada coluna.)
 
-verifica_valor_ausente <- function(x) {
+funcao_verifica_valor_ausente <- function(x) {
   return(colSums(is.na(x)))
 }
 
-verifica_valor_ausente(dados)    # exibe as tabelas e a quantidade de valores NA em cada tabela
+funcao_verifica_valor_ausente(dados)    # exibe as tabelas e a quantidade de valores NA em cada tabela
 
 
 # Tomar a decisão sobre o que fazer com os valores ausentes.
@@ -107,23 +107,23 @@ verifica_valor_ausente(dados)    # exibe as tabelas e a quantidade de valores NA
 
 # Função para limpar e pré-processar os dados (cria uma nova coluna, exclui valores ausentes, edita coluna Invoice)
 
-processa_dados <- function(data1) {
+funcao_processa_dados <- function(data) {
   
   # criando uma coluna chamada TotalPrice
-  data1$TotalPrice <- data1$Quantity * data1$Price
+  data$TotalPrice <- data$Quantity * data$Price
   
   # remove os registros/linhas com valores ausentes
-  data1 <- na.omit(data1)
+  data <- na.omit(data)
   
   # removendo os registros/linhas da coluna Invoice que contém a letra C (o que significa que este pedido foi cancelado)
-  data1 <- data1[!grepl("C", data1$Invoice), ]
+  data <- data[!grepl("C", data$Invoice), ]
   
-  return(data1)
+  return(data)
 }
 
 # Executa a função
 
-dataset <- processa_dados(dados)
+dataset <- funcao_processa_dados(dados)
 
 dim(dataset)
 View(dataset)
@@ -177,6 +177,70 @@ cat("Número de clientes únicos:", num_customers)
 total_gasto <- dataset %>%
   group_by(`Customer ID`) %>% 
   summarise(Soma = sum(TotalPrice))
+
+# Criação do gráfico de barras
+ggplot(total_gasto, aes(x = `Customer ID`, y = Soma, fill = `Customer ID`)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Total Gasto por Cliente", x = "Cliente ID", y = "Total Gasto")
+
+
+
+# Com base nos dados precisamos tomar a decisão para escolher o valor da Recência, que é quando o cliente fez
+# a última compra (pode ser mês, dia, hora)
+
+
+# Criando uma data customizada (Março de 2011) que será o nosso valor da recência com base na maior data
+
+# Olhando a maior data (última data que temos de uma compra)
+max(dataset$InvoiceDate)
+
+# Com base em uma decisão vamos escolher como valor de recência 31 de março 2011 
+
+date1 <- as.Date.character("31/03/2011", "%d/%m/%Y")
+
+
+# Com isso foi considerado a data 31/03/2011 como valor da recência.
+# E considerando a data , qual foi a compra mais recente de cada cliente? É isso que a recência irá responder
+
+
+# Após tomada de decisão de não usar o controle de hora, minuto e segundo e assim temos que ajustar a coluna de data
+
+# função para converter as datas do formato POISxt para o formato Date (edita removendo os horários da coluna)
+
+funcao_converte_data <- function(obj) {
+  
+  options(digits.secs = 3)
+  
+  return(as.Date(as.POSIXct(obj$InvoiceDate, 'GMT')))
+}
+
+# Executa a função
+
+dataset$InvoiceDate <- funcao_converte_data(dataset)
+View(dataset)
+
+
+# Agora temos a coluna InvoiceDate com a data no formato correto para usar como valor da Recência
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
