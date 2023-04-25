@@ -278,12 +278,49 @@ View(valores_rfm)
 
 
 
+# Set seed
+
+set.seed(1029)
 
 
+# Função para a segmentação de clientes com base nos valores RFM
+
+funcao_segmenta_cliente <- function(obj) {
+  
+  # cria uma lista
+  resultados <- list()
+  
+  # Obtém os valores RFM
+  dados_rfm <- select(obj, c('Recency', 'Frequency', 'Monetary'))
+  
+  # Cria o modelo
+  modelo_kmeans <- kmeans(dados_rfm, center = 5, iter.max = 50)
+  
+  # Plot do modelo
+  resultados$plot <- fviz_cluster(modelo_kmeans,
+                                  data = dados_rfm,
+                                  geom = c('point'),
+                                  ellipse.type = 'euclid')
+  
+  # Organiza os dados
+  dados_rfm$`Customer ID` <- obj$`Customer ID`
+  dados_rfm$clusters <- modelo_kmeans$cluster
+  resultados$data <- dados_rfm
+  
+  return(resultados)
+}
 
 
+# Executa a função
 
+grafico <- funcao_segmenta_cliente(valores_rfm)[1]
+grafico
 
+tabela_rfm <- funcao_segmenta_cliente(valores_rfm)[2]
+
+tabela_rfm <- as.data.frame(tabela_rfm)
+
+View(tabela_rfm)
 
 
 
