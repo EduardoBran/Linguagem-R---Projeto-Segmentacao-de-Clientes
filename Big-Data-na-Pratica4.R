@@ -233,6 +233,7 @@ View(dataset)
 #  Recency: calculada como a diferença em dias entre a data date1 (que foi definida previamente como "31/03/2011") e a data mais
 #           recente de compra (max(InvoiceDate)) para cada cliente, convertendo o resultado em formato numérico.
 #  Frequency: calculada como o número de registros (n()) no grupo, que representa a contagem de compras feitas por cada cliente.
+#             Ela conta o número de ocorrências de cada "Customer ID" no data frame.         
 #  Monetary: calculada como a soma dos valores de TotalPrice para cada cliente, representando o valor total gasto por cada cliente.
 #  Primeira_Compra: calculada como a data mínima de compra (min(InvoiceDate)) para cada cliente, representando a data da primeira
 #                   compra realizada por cada cliente.
@@ -280,17 +281,34 @@ View(valores_rfm)
 
 # Set seed
 
+# Parte do trabalho feito em machine learning envolve um processo aleatório.
+# Usamos o set.seed para que este processo aleatório sempre comece da mesma forma.
+
 set.seed(1029)
 
 
+# Aplicando machine learning com clusterização com kmneans. 
+# Clusterização é uma técnica de aprendizado não supervisionado.
+
+
 # Função para a segmentação de clientes com base nos valores RFM
+
+
+# - Cria uma lista vazia
+# - Filtra colunas Recency, Frequency e Monetary do objeto obj e armazena em dados_rfm.
+# - Cria o modelo de clusterização usando o algoritmo k-means através da função kmeans() do R. O modelo é criado com 5 clusters e
+#   com um limite máximo de 50 iterações.
+# - A função então plota o modelo através da função fviz_cluster() do pacote factoextra, que recebe como parâmetros o modelo criado
+#   anteriormente, os dados dados_rfm e outros parâmetros de configuração do gráfico.
+# - Por fim, a função adiciona a coluna Customer ID ao dataframe dados_rfm, armazena os clusters em uma nova coluna chamada clusters
+#   e retorna o resultado na lista resultados na variável data.
 
 funcao_segmenta_cliente <- function(obj) {
   
   # cria uma lista
   resultados <- list()
   
-  # Obtém os valores RFM
+  # Filtrando colunas
   dados_rfm <- select(obj, c('Recency', 'Frequency', 'Monetary'))
   
   # Cria o modelo
@@ -304,11 +322,15 @@ funcao_segmenta_cliente <- function(obj) {
   
   # Organiza os dados
   dados_rfm$`Customer ID` <- obj$`Customer ID`
-  dados_rfm$clusters <- modelo_kmeans$cluster
+  dados_rfm$Clusters <- modelo_kmeans$cluster
   resultados$data <- dados_rfm
   
   return(resultados)
 }
+
+# Observando função vemos que o objeto final é resultados ( return(resultados) )
+# E dentro de resultados foi adicionado primeiro o plot ( resultados$plot ) e em segundo o ( resultados$data )
+# Por isso para ver o grafico usaremos o [1] e a tabela usaremos o [2]
 
 
 # Executa a função
@@ -324,9 +346,9 @@ View(tabela_rfm)
 
 
 
-
-
-
+# Com isso identificamos 5 (esse nº foi escolhido acima) grupos de clientes por similaridade e através de
+# tabela_rfm podemos ver a qual grupo este cliente pertence (data.Clusters). E assim dentro de cada grupo temos clientes similares
+# Com isso podemos pegar dentro de cada grupo e verificar o nível de recência
 
 
 
