@@ -22,7 +22,7 @@ getwd()
 
 # - Recência: última vez que um cliente fez uma compra. Indica hâ quanto tempo o cliente executou uma ação desejada (ex: uma compra)
 #
-# - Frequência: com que frequência um cliente faz uma compra. A frequência indica quantas vezes o cleinte repetiu essa ação em um
+# - Frequência: com que frequência um cliente faz uma compra. A frequência indica quantas vezes o cliente repetiu essa ação em um
 #               determinado período de tempo.
 #
 # - Valor Monetário: quanto dinheiro um cliente gasta em compras.
@@ -348,7 +348,94 @@ View(tabela_rfm)
 
 # Com isso identificamos 5 (esse nº foi escolhido acima) grupos de clientes por similaridade e através de
 # tabela_rfm podemos ver a qual grupo este cliente pertence (data.Clusters). E assim dentro de cada grupo temos clientes similares
-# Com isso podemos pegar dentro de cada grupo e verificar o nível de recência
+# Com isso podemos pegar dentro de cada grupo e verificar o nível de recência entre outros
+
+
+
+# Filtrando os dados acima
+
+
+
+# Analisando valor médio da recência por grupo
+
+# Quanto menor o valor de data.Recency, mais recente foi a última compra do cliente, o que significa que demoram menos tempo para
+# fazer uma nova compra após a última.
+# E quanto maior o valor de data.Recency, mais tempo se passou desde a última compra, o que sugere que o cliente compra com menos
+# frequência. 
+
+valor_recencia <- tabela_rfm %>%
+  group_by(data.Clusters) %>%
+  summarise(Media.Recencia = mean(data.Recency))
+
+
+# Plot (gráfico barras)
+ggplot(valor_recencia, aes(x = data.Clusters, y = Media.Recencia)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Grupo", y = "Média de Recência", title = "Média de Recência por Grupo")
+
+
+
+# Analisando valor médio de frequência por grupo
+
+# E quanto maior o valor de data.Frequency, sigfnica que o grupo compra com mais frequência
+
+valor_frequencia <- tabela_rfm %>%
+  group_by(data.Clusters) %>%
+  summarise(Media.Frequencia = mean(data.Frequency))
+
+# Analisando valor total de frequência por grupo
+
+valor_frequencia_total <- tabela_rfm %>%
+  group_by(data.Clusters) %>%
+  summarise(Total.Frequencia = sum(data.Frequency))
+
+
+# Plot (gráfico barras)
+ggplot(valor_frequencia, aes(x = data.Clusters, y = Media.Frequencia)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Grupo", y = "Média de Frequência", title = "Média de Frequência por Grupo")
+
+
+
+# Analisando valor médio Monetário por grupo
+
+# E quanto maior o valor de data.Monetary, sigfnica que o grupo gasta mais em suas compras
+
+valor_monetario <- tabela_rfm %>%
+  group_by(data.Clusters) %>%
+  summarise(Media.Monetario = mean(data.Monetary))
+
+# Analisando valor total Monetário por grupo
+
+valor_monetario_total <- tabela_rfm %>%
+  group_by(data.Clusters) %>%
+  summarise(Total.Monetario = sum(data.Monetary))
+
+
+
+
+
+# Filtrando clientes por cluster (grupo)
+
+# Selecionando clientes do Cluster 1
+cluster_1 <- tabela_rfm %>%
+  filter(data.Clusters == 1)
+
+# Selecionando clientes do Cluster 2
+cluster_2 <- tabela_rfm %>%
+  filter(data.Clusters == 2)
+
+# Selecionando clientes do Cluster 3
+cluster_3 <- tabela_rfm %>%
+  filter(data.Clusters == 3)
+
+# Selecionando clientes do Cluster 4
+cluster_4 <- tabela_rfm %>%
+  filter(data.Clusters == 4)
+
+# Selecionando clientes do Cluster 5
+cluster_5 <- tabela_rfm %>%
+  filter(data.Clusters == 5)
 
 
 
