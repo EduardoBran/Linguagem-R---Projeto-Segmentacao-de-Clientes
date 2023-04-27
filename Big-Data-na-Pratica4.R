@@ -442,3 +442,25 @@ cluster_5 <- tabela_rfm %>%
 
 
 
+
+# Carregar pacotes necessários
+library(dplyr)
+library(lubridate)
+
+# Gerar dados aleatórios
+set.seed(123)
+df <- data.frame(
+  customer_id = rep(1:200, each = 5),
+  date = sample(seq(as.Date('2020/01/01'), as.Date('2021/12/31'), by="day"), 1000, replace=TRUE),
+  price = sample(seq(10, 500, by=1), 1000, replace=TRUE)
+)
+
+# Adicionar coluna quantity
+df$quantity <- sample(seq(1, 10, by = 1), 1000, replace = TRUE)
+
+# Introduzir valores NA e erráticos
+df$price[1:100] <- NA
+df$price[c(200, 300, 400)] <- 0
+df$date[c(50, 100, 150)] <- NA
+
+
