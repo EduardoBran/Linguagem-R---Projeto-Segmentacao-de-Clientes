@@ -125,7 +125,7 @@ funcao_processar_dados <- function(data){
 
 dados <- funcao_processar_dados(dados)
 
-
+dim(dados)
 
 
 # Verificando a distribuição da variável Total Price
@@ -235,7 +235,7 @@ funcao_segmenta_cliente <- function(data) {
                                   ellipse.type = 'euclid')
   
   # organiza os dados
-  dados_rfm$customer_id <- data$customer_id
+  dados_rfm$Customer_Id <- data$customer_id
   dados_rfm$Clusters <- modelo_kmeans$cluster
   
   resultados$data <- dados_rfm
@@ -259,7 +259,53 @@ View(tabela_resultados_rfm)
 
 
 
+# Analisando / filtrando os dados acima
 
+# Analisando valor médio da recência por grupo
+
+# Quanto menor o valor de data.Recency, mais recente foi a última compra do cliente, o que significa que demoram menos tempo para
+# fazer uma nova compra após a última.
+# E quanto maior o valor de data.Recency, mais tempo se passou desde a última compra, o que sugere que o cliente compra com menos
+# frequência. 
+
+valor_recencia <- tabela_resultados_rfm %>%
+  group_by(data.Clusters) %>%
+  summarise(Media.Recencia = mean(data.Recency))
+
+View(valor_recencia)
+
+# Plot (gráfico barras)
+ggplot(valor_recencia, aes(x = data.Clusters, y = Media.Recencia)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Grupo", y = "Média de Recência", title = "Média de Recência por Grupo")
+
+
+
+# Analisando valor médio de frequência por grupo
+
+# E quanto maior o valor de data.Frequency, sigfnica que o grupo compra com mais frequência
+
+valor_frequencia <- tabela_resultados_rfm %>%
+  group_by(data.Clusters) %>%
+  summarise(Media.Frequencia = mean(data.Frequency))
+
+View(valor_frequencia)
+
+
+
+# Analisando valor médio Monetário por grupo
+
+# E quanto maior o valor de data.Monetary, sigfnica que o grupo gasta mais em suas compras
+
+valor_monetario <- tabela_resultados_rfm %>%
+  group_by(data.Clusters) %>%
+  summarise(Media.Monetario = mean(data.Monetary))
+
+# Analisando valor total Monetário por grupo
+
+valor_monetario_total <- tabela_resultados_rfm %>%
+  group_by(data.Clusters) %>%
+  summarise(Total.Monetario = sum(data.Monetary))
 
 
 
